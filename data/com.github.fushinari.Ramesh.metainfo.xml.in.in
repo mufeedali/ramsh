@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Mufeed Ali 2019 <fushinari@protonmail.com> -->
+<!-- Mufeed Ali 2022 <fushinari@protonmail.com> -->
 <component type="desktop-application">
   <id>@app-id@</id>
   <metadata_license>CC0</metadata_license>
   <!-- Insert your license of choice here -->
   <!-- <project_license>MIT</project_license> -->
   <name>Ramesh</name>
-  <summary>Write a GTK + Rust application</summary>
+  <summary>Unknown purpose</summary>
   <description>
-    <p>A boilerplate template for GTK + Rust. It uses Meson as a build system and has flatpak support by default.</p>
+    <p>An idk application.</p>
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://gitlab.gnome.org/bilelmoussaoui/ramesh/raw/master/data/resources/screenshots/screenshot1.png</image>
+      <image>https://github.com/fushinari/ramesh/raw/master/data/resources/screenshots/screenshot1.png</image>
       <caption>Main window</caption>
     </screenshot>
   </screenshots>
-  <url type="homepage">https://gitlab.gnome.org/bilelmoussaoui/ramesh</url>
-  <url type="bugtracker">https://gitlab.gnome.org/bilelmoussaoui/ramesh/issues</url>
+  <url type="homepage">https://github.com/fushinari/ramesh</url>
+  <url type="bugtracker">https://github.com/fushinari/ramesh/issues</url>
   <content_rating type="oars-1.0" />
   <releases>
-    <release version="0.1.0" date="2019-07-11" />
+    <release version="0.1.0" date="2022-07-11" />
   </releases>
   <kudos>
      <!--
@@ -30,8 +30,7 @@
      <kudo>ModernToolkit</kudo>
      <kudo>HiDpiIcon</kudo>
   </kudos>
-  <developer_name>Mufeed Ali</developer_name>
-  <update_contact>fushinari@protonmail.com</update_contact>
+  <developer_name>Ramesh Authors</developer_name>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
 </component>

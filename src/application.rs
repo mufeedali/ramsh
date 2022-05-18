@@ -1,13 +1,17 @@
+// Copyright 2022 Mufeed Ali
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use gettextrs::gettext;
 use log::{debug, info};
 
+use adw::subclass::prelude::*;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
 
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
-use crate::window::ExampleApplicationWindow;
+use crate::window::RameshApplicationWindow;
 
 mod imp {
     use super::*;
@@ -15,22 +19,22 @@ mod imp {
     use once_cell::sync::OnceCell;
 
     #[derive(Debug, Default)]
-    pub struct ExampleApplication {
-        pub window: OnceCell<WeakRef<ExampleApplicationWindow>>,
+    pub struct RameshApplication {
+        pub window: OnceCell<WeakRef<RameshApplicationWindow>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ExampleApplication {
-        const NAME: &'static str = "ExampleApplication";
-        type Type = super::ExampleApplication;
-        type ParentType = gtk::Application;
+    impl ObjectSubclass for RameshApplication {
+        const NAME: &'static str = "RameshApplication";
+        type Type = super::RameshApplication;
+        type ParentType = adw::Application;
     }
 
-    impl ObjectImpl for ExampleApplication {}
+    impl ObjectImpl for RameshApplication {}
 
-    impl ApplicationImpl for ExampleApplication {
+    impl ApplicationImpl for RameshApplication {
         fn activate(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::activate");
+            debug!("AdwApplication<RameshApplication>::activate");
             self.parent_activate(app);
 
             if let Some(window) = self.window.get() {
@@ -39,7 +43,7 @@ mod imp {
                 return;
             }
 
-            let window = ExampleApplicationWindow::new(app);
+            let window = RameshApplicationWindow::new(app);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
@@ -48,7 +52,7 @@ mod imp {
         }
 
         fn startup(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::startup");
+            debug!("AdwApplication<RameshApplication>::startup");
             self.parent_startup(app);
 
             // Set icons for shell
@@ -60,29 +64,27 @@ mod imp {
         }
     }
 
-    impl GtkApplicationImpl for ExampleApplication {}
+    impl GtkApplicationImpl for RameshApplication {}
+    impl AdwApplicationImpl for RameshApplication {}
 }
 
 glib::wrapper! {
-    pub struct ExampleApplication(ObjectSubclass<imp::ExampleApplication>)
-        @extends gio::Application, gtk::Application,
+    pub struct RameshApplication(ObjectSubclass<imp::RameshApplication>)
+        @extends gio::Application, gtk::Application, adw::Application,
         @implements gio::ActionMap, gio::ActionGroup;
 }
 
-impl ExampleApplication {
+impl RameshApplication {
     pub fn new() -> Self {
         glib::Object::new(&[
             ("application-id", &Some(APP_ID)),
             ("flags", &gio::ApplicationFlags::empty()),
-            (
-                "resource-base-path",
-                &Some("/com/github/fushinari/Ramesh/"),
-            ),
+            ("resource-base-path", &Some("/com/github/fushinari/Ramesh/")),
         ])
         .expect("Application initialization failed...")
     }
 
-    fn main_window(&self) -> ExampleApplicationWindow {
+    fn main_window(&self) -> RameshApplicationWindow {
         self.imp().window.get().unwrap().upgrade().unwrap()
     }
 
@@ -124,16 +126,22 @@ impl ExampleApplication {
     fn show_about_dialog(&self) {
         let dialog = gtk::AboutDialog::builder()
             .logo_icon_name(APP_ID)
-            // Insert your license of choice here
-            // .license_type(gtk::License::MitX11)
-            // Insert your website here
-            // .website("https://gitlab.gnome.org/bilelmoussaoui/ramesh/")
+            .license_type(gtk::License::Gpl30)
+            .website("https://github.com/fushinari/ramesh/")
             .version(VERSION)
             .transient_for(&self.main_window())
             .translator_credits(&gettext("translator-credits"))
             .modal(true)
-            .authors(vec!["Mufeed Ali".into()])
-            .artists(vec!["Mufeed Ali".into()])
+            .authors(vec![
+                "Mufeed Ali".into(),
+                "Asjid Kalam".into(),
+                "Amith Mohammed Asif".into(),
+            ])
+            .artists(vec![
+                "Mufeed Ali".into(),
+                "Asjid Kalam".into(),
+                "Amith Mohammed Asif".into(),
+            ])
             .build();
 
         dialog.present();

@@ -1,3 +1,6 @@
+// Copyright 2022 Mufeed Ali
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 mod application;
 #[rustfmt::skip]
 mod config;
@@ -6,7 +9,7 @@ mod window;
 use gettextrs::{gettext, LocaleCategory};
 use gtk::{gio, glib};
 
-use self::application::ExampleApplication;
+use self::application::RameshApplication;
 use self::config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 
 fn main() {
@@ -23,6 +26,6 @@ fn main() {
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
 
-    let app = ExampleApplication::new();
+    let app = RameshApplication::new();
     app.run();
 }

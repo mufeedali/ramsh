@@ -1,8 +1,12 @@
+// Copyright 2022 Mufeed Ali
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+use adw::subclass::prelude::*;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 
-use crate::application::ExampleApplication;
+use crate::application::RameshApplication;
 use crate::config::{APP_ID, PROFILE};
 
 mod imp {
@@ -12,26 +16,23 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/fushinari/Ramesh/ui/window.ui")]
-    pub struct ExampleApplicationWindow {
-        #[template_child]
-        pub headerbar: TemplateChild<gtk::HeaderBar>,
+    pub struct RameshApplicationWindow {
         pub settings: gio::Settings,
     }
 
-    impl Default for ExampleApplicationWindow {
+    impl Default for RameshApplicationWindow {
         fn default() -> Self {
             Self {
-                headerbar: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
             }
         }
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ExampleApplicationWindow {
-        const NAME: &'static str = "ExampleApplicationWindow";
-        type Type = super::ExampleApplicationWindow;
-        type ParentType = gtk::ApplicationWindow;
+    impl ObjectSubclass for RameshApplicationWindow {
+        const NAME: &'static str = "RameshApplicationWindow";
+        type Type = super::RameshApplicationWindow;
+        type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -43,7 +44,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for ExampleApplicationWindow {
+    impl ObjectImpl for RameshApplicationWindow {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
@@ -57,8 +58,8 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for ExampleApplicationWindow {}
-    impl WindowImpl for ExampleApplicationWindow {
+    impl WidgetImpl for RameshApplicationWindow {}
+    impl WindowImpl for RameshApplicationWindow {
         // Save window state on delete event
         fn close_request(&self, window: &Self::Type) -> gtk::Inhibit {
             if let Err(err) = window.save_window_size() {
@@ -70,19 +71,20 @@ mod imp {
         }
     }
 
-    impl ApplicationWindowImpl for ExampleApplicationWindow {}
+    impl ApplicationWindowImpl for RameshApplicationWindow {}
+    impl AdwApplicationWindowImpl for RameshApplicationWindow {}
 }
 
 glib::wrapper! {
-    pub struct ExampleApplicationWindow(ObjectSubclass<imp::ExampleApplicationWindow>)
-        @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow,
+    pub struct RameshApplicationWindow(ObjectSubclass<imp::RameshApplicationWindow>)
+        @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,
         @implements gio::ActionMap, gio::ActionGroup, gtk::Root;
 }
 
-impl ExampleApplicationWindow {
-    pub fn new(app: &ExampleApplication) -> Self {
+impl RameshApplicationWindow {
+    pub fn new(app: &RameshApplication) -> Self {
         glib::Object::new(&[("application", app)])
-            .expect("Failed to create ExampleApplicationWindow")
+            .expect("Failed to create RameshApplicationWindow")
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {

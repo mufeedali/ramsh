@@ -1,3 +1,6 @@
+// Copyright 2022 Mufeed Ali
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 pub const APP_ID: &str = @APP_ID@;
 pub const GETTEXT_PACKAGE: &str = @GETTEXT_PACKAGE@;
 pub const LOCALEDIR: &str = @LOCALEDIR@;

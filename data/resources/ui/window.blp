@@ -1,0 +1,78 @@
+using Gtk 4.0;
+using Adw 1;
+
+menu primary_menu {
+  section {
+    item {
+      label: _("_Preferences");
+      action: "app.preferences";
+    }
+
+    item {
+      label: _("_Keyboard Shortcuts");
+      action: "win.show-help-overlay";
+    }
+
+    item {
+      label: _("_About Ramesh");
+      action: "app.about";
+    }
+  }
+}
+
+template RameshApplicationWindow : Adw.ApplicationWindow {
+  Adw.ViewStack main_stack {
+    Adw.ViewStackPage {
+      name: "loading";
+      child: 
+      WindowHandle {
+        can-focus: false;
+
+        Box {
+          orientation: vertical;
+          spacing: 12;
+          margin-start: 12;
+          margin-end: 12;
+          margin-top: 12;
+          margin-bottom: 12;
+          halign: center;
+          valign: center;
+
+          Spinner {
+            can-focus: false;
+            spinning: true;
+            width-request: 32;
+            height-request: 32;
+          }
+
+          Label {
+            can-focus: false;
+            wrap: true;
+            label: _("Loading…");
+
+            styles [
+              "title-1",
+            ]
+          }
+        }
+      }
+
+      ;
+    }
+
+    Adw.ViewStackPage {
+      name: "hello_world";
+      child: 
+      Label label {
+        label: _("Hello world!");
+        vexpand: true;
+
+        styles [
+          "title-header",
+        ]
+      }
+
+      ;
+    }
+  }
+}
