@@ -4,11 +4,6 @@ using Adw 1;
 menu primary_menu {
   section {
     item {
-      label: _("_Preferences");
-      action: "app.preferences";
-    }
-
-    item {
       label: _("_Keyboard Shortcuts");
       action: "win.show-help-overlay";
     }
@@ -23,56 +18,336 @@ menu primary_menu {
 template RameshApplicationWindow : Adw.ApplicationWindow {
   Adw.ViewStack main_stack {
     Adw.ViewStackPage {
-      name: "loading";
-      child: 
-      WindowHandle {
-        can-focus: false;
+      name: "welcome_page";
+      child:
+      Overlay {
 
-        Box {
-          orientation: vertical;
-          spacing: 12;
-          margin-start: 12;
-          margin-end: 12;
-          margin-top: 12;
-          margin-bottom: 12;
-          halign: center;
-          valign: center;
+        [overlay]
+        Adw.HeaderBar {
+          valign: start;
+          title-widget:
+          Adw.WindowTitle {};
 
-          Spinner {
-            can-focus: false;
-            spinning: true;
-            width-request: 32;
-            height-request: 32;
-          }
+          styles ["flat", "top"]
+        }
 
-          Label {
-            can-focus: false;
-            wrap: true;
-            label: _("Loading…");
+        WindowHandle {
+          Adw.StatusPage {
+            icon-name: "dialog-password-symbolic";
+            title: _("Ramesh");
+            description: _("A hash cracking utility for WPA2-PSK PMKID cracking");
+            vexpand: true;
+            child:
+            Box {
+              spacing: 12;
+              halign: center;
 
-            styles [
-              "title-1",
-            ]
+              Button begin_btn {
+                label: _("Begin cracking!");
+
+                styles ["pill"]
+              }
+            };
           }
         }
-      }
-
-      ;
+      };
     }
 
     Adw.ViewStackPage {
-      name: "hello_world";
-      child: 
-      Label label {
-        label: _("Hello world!");
-        vexpand: true;
+      name: "cracking_page";
+      child:
+      Overlay {
 
-        styles [
-          "title-header",
-        ]
-      }
+        [overlay]
+        Adw.HeaderBar {
+          valign: start;
+          title-widget:
+          Adw.WindowTitle {};
 
-      ;
+          styles ["flat", "top"]
+        }
+
+        WindowHandle {
+          Adw.StatusPage {
+            title: _("Cracking now...");
+            description: _("A hash cracking utility for WPA2-PSK PMKID cracking");
+            vexpand: true;
+            child:
+            Box {
+              spacing: 12;
+              halign: center;
+
+              Adw.Clamp {
+                tightening-threshold: 200;
+                child:
+                ProgressBar cracking_progress {
+                  ellipsize: end;
+                };
+              }
+            };
+          }
+        }
+      };
+    }
+
+    Adw.ViewStackPage {
+      name: "network_page";
+      child:
+      Box {
+        orientation: vertical;
+
+        Adw.HeaderBar {
+          title-widget:
+          Adw.WindowTitle {};
+
+          Button network_previous_btn {
+            tooltip-text: _("Previous Step");
+            icon-name: "go-previous-symbolic";
+          }
+
+          [end]
+          MenuButton network_menu_btn {
+            menu-model: primary_menu;
+            icon-name: "open-menu-symbolic";
+            primary: true;
+          }
+
+          styles ["flat", "top"]
+        }
+
+        WindowHandle {
+          vexpand: true;
+
+          Box {
+            orientation: vertical;
+            vexpand: true;
+
+            Adw.Clamp {
+              maximum-size: 600;
+              tightening-threshold: 500;
+              vexpand: true;
+              child:
+              Box {
+                orientation: vertical;
+                spacing: 48;
+                margin-start: 12;
+                margin-end: 12;
+                margin-top: 12;
+                margin-bottom: 12;
+                valign: center;
+
+                Box {
+                  orientation: vertical;
+                  spacing: 12;
+
+                  Image {
+                    icon-name: "network-wireless-symbolic";
+                    pixel-size: 72;
+                  }
+
+                  Label {
+                    label: _("Enter Network Details");
+                    styles ["title-1"]
+                  }
+
+                  Label {
+                    label: _("Enter the necessary details for the network to crack");
+                    styles ["caption"]
+                  }
+                }
+
+                Adw.PreferencesGroup {
+
+                  Adw.EntryRow network_essid_entry {
+                    title: _("Enter ESSID");
+                  }
+
+                  Adw.EntryRow network_bssid_entry {
+                    title: _("Enter BSSID");
+                  }
+
+                  Adw.EntryRow network_sta_mac_entry {
+                    title: _("Enter Station MAC Address");
+                  }
+
+                  Adw.EntryRow network_pmkid_entry {
+                    title: _("Enter PMKID");
+                  }
+                }
+              };
+            }
+
+            Box {
+              orientation: horizontal;
+
+              Button network_import_btn {
+                label: "Import JSON";
+                halign: start;
+                hexpand: true;
+                margin-start: 24;
+                margin-end: 24;
+                margin-top: 24;
+                margin-bottom: 24;
+
+                styles ["pill"]
+              }
+
+              Button network_next_btn {
+                icon-name: "go-next-symbolic";
+                halign: end;
+                hexpand: true;
+                height-request: 48;
+                width-request: 48;
+                margin-start: 24;
+                margin-end: 24;
+                margin-top: 24;
+                margin-bottom: 24;
+
+                styles ["circular", "suggested-action"]
+              }
+            }
+          }
+        }
+      };
+    }
+
+    Adw.ViewStackPage {
+      name: "wordlist_page";
+      child:
+      Box {
+        orientation: vertical;
+
+        Adw.HeaderBar {
+          title-widget:
+          Adw.WindowTitle {
+            title: _("Enter your wordlist");
+          };
+
+          Button wordlist_previous_btn {
+            tooltip-text: _("Previous Step");
+            icon-name: "go-previous-symbolic";
+          }
+
+          [end]
+          MenuButton wordlist_menu_btn {
+            menu-model: primary_menu;
+            icon-name: "open-menu-symbolic";
+            primary: true;
+          }
+
+          styles ["flat", "top"]
+        }
+
+        ScrolledWindow wordlist_scroller {
+          vexpand: true;
+          margin-start: 12;
+          margin-end: 12;
+          margin-top: 12;
+          child:
+          TextView wordlist_text {
+            wrap-mode: word_char;
+            left-margin: 8;
+            right-margin: 8;
+            top-margin: 8;
+            bottom-margin: 8;
+
+            styles ["card"]
+          };
+        }
+
+        Box {
+          orientation: horizontal;
+
+          Button wordlist_import_btn {
+            label: "Import";
+            halign: start;
+            hexpand: true;
+            margin-start: 24;
+            margin-end: 24;
+            margin-top: 24;
+            margin-bottom: 24;
+
+            styles ["pill"]
+          }
+
+          Button wordlist_next_btn {
+            icon-name: "go-next-symbolic";
+            halign: end;
+            hexpand: true;
+            height-request: 48;
+            width-request: 48;
+            margin-start: 24;
+            margin-end: 24;
+            margin-top: 24;
+            margin-bottom: 24;
+
+            styles ["circular", "suggested-action"]
+          }
+        }
+      };
+    }
+
+    Adw.ViewStackPage {
+      name: "success_page";
+      child:
+      Overlay {
+
+        [overlay]
+        Adw.HeaderBar {
+          valign: start;
+          title-widget:
+          Adw.WindowTitle {};
+
+          styles ["flat", "top"]
+        }
+
+        WindowHandle {
+          Adw.StatusPage success_status_page{
+            icon-name: "emblem-ok-symbolic";
+            title: _("Success!");
+            description: _("Oh, we cracked it!");
+            vexpand: true;
+            child:
+            Button success_another_btn {
+              label: _("Crack another network");
+              halign: center;
+
+              styles ["pill"]
+            };
+          }
+        }
+      };
+    }
+
+    Adw.ViewStackPage {
+      name: "failure_page";
+      child:
+      Overlay {
+
+        [overlay]
+        Adw.HeaderBar {
+          valign: start;
+          title-widget:
+          Adw.WindowTitle {};
+
+          styles ["flat", "top"]
+        }
+
+        WindowHandle {
+          Adw.StatusPage failure_status_page {
+            icon-name: "dialog-error-symbolic";
+            title: _("Oh no...");
+            description: _("Something went wrong. Very wrong.");
+            vexpand: true;
+            child:
+            Button failure_another_btn {
+              label: _("Try another network");
+
+              styles ["pill"]
+            };
+          }
+        }
+      };
     }
   }
 }

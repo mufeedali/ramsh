@@ -56,7 +56,7 @@ mod imp {
             self.parent_startup(app);
 
             // Set icons for shell
-            gtk::Window::set_default_icon_name(APP_ID);
+            gtk::Window::set_default_icon_name("dialog-password-symbolic");
 
             app.setup_css();
             app.setup_gactions();
@@ -125,7 +125,7 @@ impl RameshApplication {
 
     fn show_about_dialog(&self) {
         let dialog = gtk::AboutDialog::builder()
-            .logo_icon_name(APP_ID)
+            .logo_icon_name("dialog-password-symbolic")
             .license_type(gtk::License::Gpl30)
             .website("https://github.com/fushinari/ramesh/")
             .version(VERSION)
