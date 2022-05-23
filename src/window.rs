@@ -174,6 +174,20 @@ impl RameshApplicationWindow {
         // Network Page
         imp.network_next_btn
             .connect_clicked(clone!(@weak self as win => move |_| {
+                let imp = win.imp();
+                if imp.network_essid_entry.text().is_empty() {
+                    imp.network_essid_entry.add_css_class("error");
+                    return;
+                } else if imp.network_bssid_entry.text().is_empty() {
+                    imp.network_bssid_entry.add_css_class("error");
+                    return;
+                } else if imp.network_sta_mac_entry.text().is_empty() {
+                    imp.network_sta_mac_entry.add_css_class("error");
+                    return;
+                } else if imp.network_pmkid_entry.text().is_empty() {
+                    imp.network_pmkid_entry.add_css_class("error");
+                    return;
+                }
                 win.page_switch("wordlist_page");
             }));
         imp.network_previous_btn
@@ -183,6 +197,26 @@ impl RameshApplicationWindow {
         imp.network_import_btn
             .connect_clicked(clone!(@weak self as win => move |_| {
                 win.import_network_json();
+            }));
+        imp.network_essid_entry
+            .connect_changed(clone!(@weak self as win => move |_| {
+                let imp = win.imp();
+                imp.network_essid_entry.remove_css_class("error");
+            }));
+        imp.network_bssid_entry
+            .connect_changed(clone!(@weak self as win => move |_| {
+                let imp = win.imp();
+                imp.network_bssid_entry.remove_css_class("error");
+            }));
+        imp.network_sta_mac_entry
+            .connect_changed(clone!(@weak self as win => move |_| {
+                let imp = win.imp();
+                imp.network_sta_mac_entry.remove_css_class("error");
+            }));
+        imp.network_pmkid_entry
+            .connect_changed(clone!(@weak self as win => move |_| {
+                let imp = win.imp();
+                imp.network_pmkid_entry.remove_css_class("error");
             }));
 
         // Wordlist Page

@@ -70,7 +70,6 @@ template RameshApplicationWindow : Adw.ApplicationWindow {
         WindowHandle {
           Adw.StatusPage {
             title: _("Cracking now...");
-            description: _("A hash cracking utility for WPA2-PSK PMKID cracking");
             vexpand: true;
             child:
             Box {
@@ -78,7 +77,7 @@ template RameshApplicationWindow : Adw.ApplicationWindow {
               halign: center;
 
               Adw.Clamp {
-                tightening-threshold: 200;
+                tightening-threshold: 300;
                 child:
                 ProgressBar cracking_progress {
                   ellipsize: end;
@@ -342,6 +341,7 @@ template RameshApplicationWindow : Adw.ApplicationWindow {
             child:
             Button failure_another_btn {
               label: _("Try another network");
+              halign: center;
 
               styles ["pill"]
             };
