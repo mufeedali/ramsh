@@ -222,7 +222,8 @@ impl RameshApplicationWindow {
         // Wordlist Page
         imp.wordlist_next_btn
             .connect_clicked(clone!(@weak self as win => move |_| {
-                win.page_switch("success_page");
+                win.page_switch("cracking_page");
+                win.complete_wordlist_process(None);
             }));
         imp.wordlist_previous_btn
             .connect_clicked(clone!(@weak self as win => move |_| {
@@ -347,6 +348,9 @@ impl RameshApplicationWindow {
                 let file = &d.file().expect("Couldn't get file");
                 let filename = file.path().expect("Couldn't get file path");
 
+                let imp = win.imp();
+                imp.main_stack.set_visible_child_name("cracking_page");
+
                 win.complete_wordlist_process(Some(filename));
             }
             d.destroy();
@@ -356,9 +360,8 @@ impl RameshApplicationWindow {
 
     fn complete_wordlist_process(&self, path: Option<PathBuf>) {
         let imp = self.imp();
-        let buffer = imp.wordlist_text.buffer();
-        self.page_switch("cracking_page");
 
+        let buffer = imp.wordlist_text.buffer();
         // avoid having to load the text file into the UI if using import
         // this avoids unnecessary overhead
         let text = match path {
@@ -376,9 +379,12 @@ impl RameshApplicationWindow {
             &imp.network_sta_mac_entry.text(),
             &imp.network_pmkid_entry.text(),
             wordlist_dict,
-        ); // not yet getting anywhere
+        );
 
-        self.page_switch("success_page");
+        // this works though.
+        if imp.main_stack.visible_child_name().unwrap() != "success_page" {
+            imp.main_stack.set_visible_child_name("failure_page");
+        }
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {
@@ -417,7 +423,9 @@ impl RameshApplicationWindow {
         pmkid: &str,
         wordlist_dict: Vec<&str>,
     ) -> Option<&str> {
-        let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+        let (sender_pass, receiver_pass) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+        let (sender_progress, receiver_progress) =
+            glib::MainContext::channel(glib::PRIORITY_DEFAULT);
 
         let essid = essid.as_bytes();
 
@@ -454,7 +462,7 @@ impl RameshApplicationWindow {
         wordlist_dict.par_iter().for_each(|passphrase| {
             // returns the hash generated using the passphrase
             // compare the both pmkids and validate
-
+            let _ = sender_progress.send(1.0 / wordlist_dict.len() as f64);
             /*
                 derive the pbkdf2 using the network name and passphrase
                 this is usually the most time consuming part
@@ -471,17 +479,28 @@ impl RameshApplicationWindow {
 
             let new_hash = pmkid.unwrap().to_string();
             if new_hash == pmkid_hash {
-                let _ = sender.send(String::from(format!("{} : {}", pmkid_hash, passphrase)));
+                let _ = sender_pass.send(String::from(format!(
+                    "PMKID Hash: {}\nPassphrase: {}",
+                    pmkid_hash, passphrase
+                )));
             }
         });
 
         let imp = self.imp();
         let success_status_page_clone = imp.success_status_page.clone();
-        receiver.attach(None, move |msg| {
+        let cracking_progress_clone = imp.cracking_progress.clone();
+        let main_stack_clone = imp.main_stack.clone();
+        receiver_progress.attach(None, move |msg| {
+            cracking_progress_clone.set_fraction(cracking_progress_clone.fraction() + msg);
+            glib::Continue(true)
+        });
+        receiver_pass.attach(None, move |msg| {
             success_status_page_clone.set_description(Some(msg.as_str()));
+            main_stack_clone.set_visible_child_name("success_page");
             glib::Continue(true)
         });
 
+        imp.cracking_progress.set_fraction(0.0);
         return None;
     }
 }

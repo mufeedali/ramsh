@@ -54,42 +54,6 @@ template RameshApplicationWindow : Adw.ApplicationWindow {
     }
 
     Adw.ViewStackPage {
-      name: "cracking_page";
-      child:
-      Overlay {
-
-        [overlay]
-        Adw.HeaderBar {
-          valign: start;
-          title-widget:
-          Adw.WindowTitle {};
-
-          styles ["flat", "top"]
-        }
-
-        WindowHandle {
-          Adw.StatusPage {
-            title: _("Cracking now...");
-            vexpand: true;
-            child:
-            Box {
-              spacing: 12;
-              halign: center;
-
-              Adw.Clamp {
-                tightening-threshold: 300;
-                child:
-                ProgressBar cracking_progress {
-                  ellipsize: end;
-                };
-              }
-            };
-          }
-        }
-      };
-    }
-
-    Adw.ViewStackPage {
       name: "network_page";
       child:
       Box {
@@ -281,6 +245,42 @@ template RameshApplicationWindow : Adw.ApplicationWindow {
             margin-bottom: 24;
 
             styles ["circular", "suggested-action"]
+          }
+        }
+      };
+    }
+
+    Adw.ViewStackPage {
+      name: "cracking_page";
+      child:
+      Overlay {
+
+        [overlay]
+        Adw.HeaderBar {
+          valign: start;
+          title-widget:
+          Adw.WindowTitle {};
+
+          styles ["flat", "top"]
+        }
+
+        WindowHandle {
+          Adw.StatusPage {
+            title: _("Cracking now...");
+            vexpand: true;
+            child:
+            Box {
+              spacing: 12;
+              halign: center;
+
+              Adw.Clamp {
+                tightening-threshold: 300;
+                child:
+                ProgressBar cracking_progress {
+                  ellipsize: end;
+                };
+              }
+            };
           }
         }
       };
