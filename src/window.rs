@@ -417,6 +417,8 @@ impl RameshApplicationWindow {
         pmkid: &str,
         wordlist_dict: Vec<&str>,
     ) -> Option<&str> {
+        let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+
         let essid = essid.as_bytes();
 
         let bssid = bssid
@@ -469,13 +471,15 @@ impl RameshApplicationWindow {
 
             let new_hash = pmkid.unwrap().to_string();
             if new_hash == pmkid_hash {
-                println!("{} : {}", pmkid_hash, passphrase);
-
-                println!(
-                    "⏰ total crack time: {} millis",
-                    total_crack_time.elapsed().as_millis()
-                );
+                let _ = sender.send(String::from(format!("{} : {}", pmkid_hash, passphrase)));
             }
+        });
+
+        let imp = self.imp();
+        let success_status_page_clone = imp.success_status_page.clone();
+        receiver.attach(None, move |msg| {
+            success_status_page_clone.set_description(Some(msg.as_str()));
+            glib::Continue(true)
         });
 
         return None;
