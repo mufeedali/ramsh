@@ -13,10 +13,10 @@ use hex;
 use rayon::prelude::*;
 use rustc_serialize::hex::ToHex;
 
-use std::fmt::format;
 use std::fs::{read_to_string, File};
 use std::io::BufReader;
 use std::path::PathBuf;
+use std::thread;
 use std::time::Instant;
 
 use crate::application::RameshApplication;
@@ -370,21 +370,16 @@ impl RameshApplicationWindow {
                 .to_string(),
             Some(file_path) => read_to_string(&file_path.as_path()).unwrap(),
         };
-        let newline_split = text.split("\n");
-        let wordlist_dict: Vec<&str> = newline_split.collect();
+        let newline_split = text.lines().map(str::to_string);
+        let wordlist_dict: Vec<String> = newline_split.collect();
 
         self.get_result(
-            &imp.network_essid_entry.text(),
-            &imp.network_bssid_entry.text(),
-            &imp.network_sta_mac_entry.text(),
-            &imp.network_pmkid_entry.text(),
+            imp.network_essid_entry.text().to_string(),
+            imp.network_bssid_entry.text().to_string(),
+            imp.network_sta_mac_entry.text().to_string(),
+            imp.network_pmkid_entry.text().to_string(),
             wordlist_dict,
         );
-
-        // this works though.
-        if imp.main_stack.visible_child_name().unwrap() != "success_page" {
-            imp.main_stack.set_visible_child_name("failure_page");
-        }
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {
@@ -417,17 +412,18 @@ impl RameshApplicationWindow {
 
     fn get_result(
         &self,
-        essid: &str,
-        bssid: &str,
-        sta_mac: &str,
-        pmkid: &str,
-        wordlist_dict: Vec<&str>,
+        essid: String,
+        bssid: String,
+        sta_mac: String,
+        pmkid: String,
+        wordlist_dict: Vec<String>,
     ) -> Option<&str> {
+        let (sender_state, receiver_state) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
         let (sender_pass, receiver_pass) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
         let (sender_progress, receiver_progress) =
             glib::MainContext::channel(glib::PRIORITY_DEFAULT);
 
-        let essid = essid.as_bytes();
+        let essid = essid.as_bytes().to_owned();
 
         let bssid = bssid
             .to_lowercase()
@@ -441,9 +437,13 @@ impl RameshApplicationWindow {
             .replace("-", "")
             .replace(".", "");
 
-        let pmkid_data = pmkid.split("*").collect::<Vec<&str>>();
+        let pmkid_data = pmkid
+            .split("*")
+            .map(str::to_string)
+            .collect::<Vec<String>>();
 
-        let pmkid_hash = *pmkid_data.get(0).unwrap();
+        let pmkid_hash = &*pmkid_data.get(0).unwrap();
+        let pmkid_hash = pmkid_hash.clone();
 
         /*
             PMKID = HMAC-SHA1-128(PMK, "PMK Name" | MAC_AP | MAC_STA)
@@ -457,50 +457,69 @@ impl RameshApplicationWindow {
         ]
         .concat();
 
-        let total_crack_time = std::time::Instant::now();
+        let total_crack_time = Instant::now();
 
-        wordlist_dict.par_iter().for_each(|passphrase| {
-            // returns the hash generated using the passphrase
-            // compare the both pmkids and validate
-            let _ = sender_progress.send(1.0 / wordlist_dict.len() as f64);
-            /*
-                derive the pbkdf2 using the network name and passphrase
-                this is usually the most time consuming part
-            */
-            let mut key_out = [0u8; 32];
-            pbkdf2_hmac(passphrase.as_bytes(), &essid, 4096, &mut key_out);
+        thread::spawn(move || {
+            wordlist_dict.par_iter().for_each(|passphrase| {
+                // returns the hash generated using the passphrase
+                // compare the both pmkids and validate
+                let _ = sender_progress.send(1.0 / wordlist_dict.len() as f64);
 
-            /*
-                get the hmac-sha1 of the param using the pmk as key
-                and get the first 32 bits from its hexdigest
-            */
-            let hash = hmacsha1::hmac_sha1(&key_out, &params.clone().as_bytes()).to_hex();
-            let pmkid = hash.get(..32);
+                /*
+                    derive the pbkdf2 using the network name and passphrase
+                    this is usually the most time consuming part
+                */
+                let mut key_out = [0u8; 32];
+                pbkdf2_hmac(passphrase.as_bytes(), &essid, 4096, &mut key_out);
 
-            let new_hash = pmkid.unwrap().to_string();
-            if new_hash == pmkid_hash {
-                let _ = sender_pass.send(String::from(format!(
-                    "PMKID Hash: {}\nPassphrase: {}",
-                    pmkid_hash, passphrase
-                )));
-            }
+                /*
+                    get the hmac-sha1 of the param using the pmk as key
+                    and get the first 32 bits from its hexdigest
+                */
+                let hash = hmacsha1::hmac_sha1(&key_out, &params.clone().as_bytes()).to_hex();
+                let pmkid = hash.get(..32);
+
+                let new_hash = pmkid.unwrap().to_string();
+                if new_hash == pmkid_hash {
+                    let _ = sender_pass.send(String::from(format!(
+                        "PMKID Hash: {}\nPassphrase: {}\nTime Taken: {} ms",
+                        pmkid_hash,
+                        passphrase,
+                        total_crack_time.elapsed().as_millis()
+                    )));
+                };
+            });
+            let _ = sender_state.send(String::from("No match found"));
         });
 
         let imp = self.imp();
-        let success_status_page_clone = imp.success_status_page.clone();
+
         let cracking_progress_clone = imp.cracking_progress.clone();
-        let main_stack_clone = imp.main_stack.clone();
         receiver_progress.attach(None, move |msg| {
             cracking_progress_clone.set_fraction(cracking_progress_clone.fraction() + msg);
             glib::Continue(true)
         });
+
+        let main_stack_clone = imp.main_stack.clone();
+        let success_status_page_clone = imp.success_status_page.clone();
         receiver_pass.attach(None, move |msg| {
             success_status_page_clone.set_description(Some(msg.as_str()));
             main_stack_clone.set_visible_child_name("success_page");
             glib::Continue(true)
         });
 
-        imp.cracking_progress.set_fraction(0.0);
+        let main_stack_clone = imp.main_stack.clone();
+        let cracking_progress_clone = imp.cracking_progress.clone();
+        let failure_status_page_clone = imp.failure_status_page.clone();
+        receiver_state.attach(None, move |msg| {
+            failure_status_page_clone.set_description(Some(msg.as_str()));
+            if main_stack_clone.visible_child_name().unwrap() != "success_page" {
+                main_stack_clone.set_visible_child_name("failure_page");
+            }
+            cracking_progress_clone.set_fraction(0.0);
+            glib::Continue(true)
+        });
+
         return None;
     }
 }
