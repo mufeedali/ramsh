@@ -1,6 +1,6 @@
 # Ramesh
 
-Ramesh is a... idk yet ig...
+Ramesh is a PMKID cracking software built specifically for GNOME.
 
 ## Documentation
 
@@ -9,3 +9,13 @@ UI/UX:
 - GTK4
 - libadwaita
 - Blueprint
+
+Packaging:
+
+- Flatpak
+
+Development:
+
+- GNOME Builder
+- VSCode
+

@@ -1,5 +1,5 @@
 {
-    "app-id": "com.github.fushinari.Ramesh.Devel",
+    "app-id": "com.github.fushinari.Ramesh",
     "runtime": "org.gnome.Platform",
     "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
@@ -8,10 +8,7 @@
     "finish-args" : [
         "--socket=fallback-x11",
         "--socket=wayland",
-        "--device=dri",
-        "--env=RUST_LOG=ramesh=debug",
-        "--env=G_MESSAGES_DEBUG=none",
-        "--env=RUST_BACKTRACE=1"
+        "--device=dri"
     ],
     "build-options" : {
         "append-path" : "/usr/lib/sdk/rust-stable/bin",
@@ -28,7 +25,7 @@
             "name": "ramesh",
             "buildsystem": "meson",
             "run-tests": true,
-            "config-opts": ["-Dprofile=development"],
+            "config-opts": ["-Dprofile=default"],
             "sources": [
                 {
                     "type": "dir",
