@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=Ramesh
-Comment=Write a GTK + Rust application
+Name=Ramsh
+Comment=A PMKID cracking software built specifically for GNOME
 Type=Application
-Exec=ramesh
+Exec=ramsh
 Terminal=false
 Categories=GNOME;GTK;
 Keywords=Gnome;GTK;

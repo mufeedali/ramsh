@@ -19,7 +19,7 @@ use std::path::PathBuf;
 use std::thread;
 use std::time::Instant;
 
-use crate::application::RameshApplication;
+use crate::application::RamshApplication;
 use crate::config::{APP_ID, PROFILE};
 
 mod imp {
@@ -28,8 +28,8 @@ mod imp {
     use gtk::CompositeTemplate;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/github/fushinari/Ramesh/ui/window.ui")]
-    pub struct RameshApplicationWindow {
+    #[template(resource = "/com/github/fushinari/Ramsh/ui/window.ui")]
+    pub struct RamshApplicationWindow {
         pub settings: gio::Settings,
         #[template_child]
         pub main_stack: TemplateChild<adw::ViewStack>,
@@ -75,7 +75,7 @@ mod imp {
         pub failure_status_page: TemplateChild<adw::StatusPage>,
     }
 
-    impl Default for RameshApplicationWindow {
+    impl Default for RamshApplicationWindow {
         fn default() -> Self {
             Self {
                 settings: gio::Settings::new(APP_ID),
@@ -102,9 +102,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for RameshApplicationWindow {
-        const NAME: &'static str = "RameshApplicationWindow";
-        type Type = super::RameshApplicationWindow;
+    impl ObjectSubclass for RamshApplicationWindow {
+        const NAME: &'static str = "RamshApplicationWindow";
+        type Type = super::RamshApplicationWindow;
         type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
@@ -117,7 +117,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for RameshApplicationWindow {
+    impl ObjectImpl for RamshApplicationWindow {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
@@ -131,8 +131,8 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for RameshApplicationWindow {}
-    impl WindowImpl for RameshApplicationWindow {
+    impl WidgetImpl for RamshApplicationWindow {}
+    impl WindowImpl for RamshApplicationWindow {
         // Save window state on delete event
         fn close_request(&self, window: &Self::Type) -> gtk::Inhibit {
             if let Err(err) = window.save_window_size() {
@@ -144,20 +144,20 @@ mod imp {
         }
     }
 
-    impl ApplicationWindowImpl for RameshApplicationWindow {}
-    impl AdwApplicationWindowImpl for RameshApplicationWindow {}
+    impl ApplicationWindowImpl for RamshApplicationWindow {}
+    impl AdwApplicationWindowImpl for RamshApplicationWindow {}
 }
 
 glib::wrapper! {
-    pub struct RameshApplicationWindow(ObjectSubclass<imp::RameshApplicationWindow>)
+    pub struct RamshApplicationWindow(ObjectSubclass<imp::RamshApplicationWindow>)
         @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,
         @implements gio::ActionMap, gio::ActionGroup, gtk::Root;
 }
 
-impl RameshApplicationWindow {
-    pub fn new(app: &RameshApplication) -> Self {
+impl RamshApplicationWindow {
+    pub fn new(app: &RamshApplication) -> Self {
         let window: Self = glib::Object::new(&[("application", app)])
-            .expect("Failed to create RameshApplicationWindow");
+            .expect("Failed to create RamshApplicationWindow");
         window.setup_signals();
         window
     }
@@ -482,7 +482,7 @@ impl RameshApplicationWindow {
                 let new_hash = pmkid.unwrap().to_string();
                 if new_hash == pmkid_hash {
                     let _ = sender_pass.send(String::from(format!(
-                        "PMKID Hash: {}\nPassphrase: {}\nTime Taken: {} ms",
+                        "PMKID Hash: {}\n\nPassphrase: <b>{}</b>\n\nTime Taken: {} ms",
                         pmkid_hash,
                         passphrase,
                         total_crack_time.elapsed().as_millis()

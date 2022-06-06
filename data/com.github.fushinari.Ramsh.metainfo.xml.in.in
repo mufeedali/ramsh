@@ -5,19 +5,19 @@
   <metadata_license>CC0</metadata_license>
   <!-- Insert your license of choice here -->
   <!-- <project_license>MIT</project_license> -->
-  <name>Ramesh</name>
-  <summary>Unknown purpose</summary>
+  <name>Ramsh</name>
+  <summary>A PMKID cracking software built specifically for GNOME</summary>
   <description>
-    <p>An idk application.</p>
+    <p>A PMKID cracking software built specifically for GNOME</p>
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://github.com/fushinari/ramesh/raw/master/data/resources/screenshots/screenshot1.png</image>
+      <image>https://github.com/fushinari/ramsh/raw/master/data/resources/screenshots/screenshot1.png</image>
       <caption>Main window</caption>
     </screenshot>
   </screenshots>
-  <url type="homepage">https://github.com/fushinari/ramesh</url>
-  <url type="bugtracker">https://github.com/fushinari/ramesh/issues</url>
+  <url type="homepage">https://github.com/fushinari/ramsh</url>
+  <url type="bugtracker">https://github.com/fushinari/ramsh/issues</url>
   <content_rating type="oars-1.0" />
   <releases>
     <release version="0.1.0" date="2022-05-17" />
@@ -30,7 +30,7 @@
      <kudo>ModernToolkit</kudo>
      <kudo>HiDpiIcon</kudo>
   </kudos>
-  <developer_name>Ramesh Authors</developer_name>
+  <developer_name>Ramsh Authors</developer_name>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
 </component>

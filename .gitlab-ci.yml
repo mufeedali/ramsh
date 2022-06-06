@@ -8,10 +8,10 @@ flatpak:
   tags:
     - flatpak
   variables:
-    BUNDLE: "ramesh-nightly.flatpak"
-    MANIFEST_PATH: "build-aux/com.github.fushinari.Ramesh.Devel.json"
-    FLATPAK_MODULE: "ramesh"
-    APP_ID: "com.github.fushinari.Ramesh.Devel"
+    BUNDLE: "ramsh-nightly.flatpak"
+    MANIFEST_PATH: "build-aux/com.github.fushinari.Ramsh.json"
+    FLATPAK_MODULE: "ramsh"
+    APP_ID: "com.github.fushinari.Ramsh"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
   script:
     - >

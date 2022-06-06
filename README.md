@@ -1,6 +1,6 @@
-# Ramesh
+# Ramsh
 
-Ramesh is a PMKID cracking software built specifically for GNOME.
+Ramsh is a PMKID cracking software built specifically for GNOME.
 
 ## Documentation
 

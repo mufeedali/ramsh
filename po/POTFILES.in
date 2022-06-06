@@ -1,6 +1,6 @@
-data/com.github.fushinari.Ramesh.desktop.in.in
-data/com.github.fushinari.Ramesh.gschema.xml.in
-data/com.github.fushinari.Ramesh.metainfo.xml.in.in
+data/com.github.fushinari.Ramsh.desktop.in.in
+data/com.github.fushinari.Ramsh.gschema.xml.in
+data/com.github.fushinari.Ramsh.metainfo.xml.in.in
 data/resources/ui/shortcuts.blp
 data/resources/ui/window.blp
 src/application.rs

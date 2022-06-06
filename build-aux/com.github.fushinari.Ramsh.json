@@ -1,10 +1,10 @@
 {
-    "app-id": "com.github.fushinari.Ramesh",
+    "app-id": "com.github.fushinari.Ramsh",
     "runtime": "org.gnome.Platform",
     "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
-    "command": "ramesh",
+    "command": "ramsh",
     "finish-args" : [
         "--socket=fallback-x11",
         "--socket=wayland",
@@ -22,7 +22,7 @@
     },
     "modules": [
         {
-            "name": "ramesh",
+            "name": "ramsh",
             "buildsystem": "meson",
             "run-tests": true,
             "config-opts": ["-Dprofile=default"],

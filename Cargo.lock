@@ -865,7 +865,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ramesh"
+name = "ramsh"
 version = "0.1.0"
 dependencies = [
  "bstr",

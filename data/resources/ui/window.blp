@@ -9,13 +9,13 @@ menu primary_menu {
     }
 
     item {
-      label: _("_About Ramesh");
+      label: _("_About Ramsh");
       action: "app.about";
     }
   }
 }
 
-template RameshApplicationWindow : Adw.ApplicationWindow {
+template RamshApplicationWindow : Adw.ApplicationWindow {
   Adw.ViewStack main_stack {
     Adw.ViewStackPage {
       name: "welcome_page";
@@ -34,7 +34,7 @@ template RameshApplicationWindow : Adw.ApplicationWindow {
         WindowHandle {
           Adw.StatusPage {
             icon-name: "dialog-password-symbolic";
-            title: _("Ramesh");
+            title: _("Ramsh");
             description: _("A hash cracking utility for WPA2-PSK PMKID cracking");
             vexpand: true;
             child:

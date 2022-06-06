@@ -9,7 +9,7 @@ mod window;
 use gettextrs::{gettext, LocaleCategory};
 use gtk::{gio, glib};
 
-use self::application::RameshApplication;
+use self::application::RamshApplication;
 use self::config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 
 fn main() {
@@ -21,11 +21,11 @@ fn main() {
     gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
     gettextrs::textdomain(GETTEXT_PACKAGE).expect("Unable to switch to the text domain");
 
-    glib::set_application_name(&gettext("Ramesh"));
+    glib::set_application_name(&gettext("Ramsh"));
 
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
 
-    let app = RameshApplication::new();
+    let app = RamshApplication::new();
     app.run();
 }
